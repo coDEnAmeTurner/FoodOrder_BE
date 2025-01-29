@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'DjangoApp.apps.DjangoappConfig',
-    'cloudinary'
+    'cloudinary',
+    'oauth2_provider'
 ]
 
 MIDDLEWARE = [
@@ -143,3 +144,16 @@ cloudinary.config(
     api_secret = "Beyh7TAogM7IDGum5gmXM7f1ZKQ", # Click 'View API Keys' above to copy your API secret
     secure=True
 )
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'oauth2_provider.contrib.rest_framework.OAuth2Authentication',  
+    )
+}
+
+CLIENT_ID = 'koNt8vnFHTaUePdHTpuxQTSv96Ew7SCAKYpHRFCG'
+
+CLIENT_SECRET = 'leZu7SJ334iAsJLIBFkiVLiOlMLtbgHSsv0w0DCTGCOOIJHPg93g2Xfok05k8vp5R5WwzQW3Qs86dpGrnjbz7mQ90lua9RlM5NgxwMnhSKPyONQfGkoBJrmbmwFPo9xG'
+
+OAUTH2_PROVIDER = { 'OAUTH2_BACKEND_CLASS': 'oauth2_provider.oauth2_backends.JSONOAuthLibCore' }
+
