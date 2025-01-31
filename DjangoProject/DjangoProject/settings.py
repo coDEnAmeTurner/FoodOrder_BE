@@ -40,7 +40,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'DjangoApp.apps.DjangoappConfig',
     'cloudinary',
-    'oauth2_provider'
+    'oauth2_provider',
+    'drf_yasg',
+    'rest_framework',
+    'debug_toolbar'
 ]
 
 MIDDLEWARE = [
@@ -51,6 +54,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
 
 ROOT_URLCONF = 'DjangoProject.urls'
@@ -151,9 +155,23 @@ REST_FRAMEWORK = {
     )
 }
 
-CLIENT_ID = 'koNt8vnFHTaUePdHTpuxQTSv96Ew7SCAKYpHRFCG'
+CLIENT_ID = 'cxDvjGqOIhfuiAhLDzHVavIO2phLNedhyTC08X7r'
 
-CLIENT_SECRET = 'leZu7SJ334iAsJLIBFkiVLiOlMLtbgHSsv0w0DCTGCOOIJHPg93g2Xfok05k8vp5R5WwzQW3Qs86dpGrnjbz7mQ90lua9RlM5NgxwMnhSKPyONQfGkoBJrmbmwFPo9xG'
+CLIENT_SECRET = '4XLRhINZ1jlo1Kc3xp3DXR1bFIPKLG1kI1qsOrQhf8ANQzO4RH0mC86sajl4AcbJpUimzmdBEdGLsvO20uMH4iAPGs95zF80FwZPPxxh73stQ1lkuRiUtAUiov793eOZ'
 
 OAUTH2_PROVIDER = { 'OAUTH2_BACKEND_CLASS': 'oauth2_provider.oauth2_backends.JSONOAuthLibCore' }
 
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS': {
+        'Bearer': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header'
+        }
+    },
+    'USE_SESSION_AUTH': False,
+}
+
+INTERNAL_IPS = [
+    "127.0.0.1",
+]

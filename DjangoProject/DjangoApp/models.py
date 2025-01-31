@@ -55,6 +55,7 @@ class Order_Dish(models.Model):
         unique_together = ('order_id','dish_id')
 
 class Shop(models.Model):
+    user = models.OneToOneField('user',on_delete=models.CASCADE,default=1)
     dia_diem = models.TextField(blank=True,null=False)
     is_valid = models.BooleanField(default=0,blank=False,null=False)
     tien_van_chuyen = models.FloatField(default=0,blank=False,null=False)
