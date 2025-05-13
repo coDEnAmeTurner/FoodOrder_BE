@@ -152,12 +152,14 @@ cloudinary.config(
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'oauth2_provider.contrib.rest_framework.OAuth2Authentication',  
-    )
+    ),
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10
 }
 
-CLIENT_ID = 'cxDvjGqOIhfuiAhLDzHVavIO2phLNedhyTC08X7r'
+CLIENT_ID = 'D0xi0qvRuL8eVfIvaVPzbfJsU6bXWhSsTNfXtmKo'
 
-CLIENT_SECRET = '4XLRhINZ1jlo1Kc3xp3DXR1bFIPKLG1kI1qsOrQhf8ANQzO4RH0mC86sajl4AcbJpUimzmdBEdGLsvO20uMH4iAPGs95zF80FwZPPxxh73stQ1lkuRiUtAUiov793eOZ'
+CLIENT_SECRET = 'MgaGR1UvZ9n4ipEXSksKz9w4BVEquqhZr08KFv1anuzN5zgJKIp1mEd01FzqhR4DPrESax4nVJnD7eqp8J8zXfCz5147r8JCkysfJXyMb6gdTfswh8Yh2YIDnZAO4TMi'
 
 OAUTH2_PROVIDER = { 'OAUTH2_BACKEND_CLASS': 'oauth2_provider.oauth2_backends.JSONOAuthLibCore' }
 
