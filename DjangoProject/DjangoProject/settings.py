@@ -26,7 +26,10 @@ SECRET_KEY = 'django-insecure-hh*)pv4ea+6@*!c8w@rb1t2wm+re*5f%@m=6v!i#-)!_hlg-g%
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    '192.168.1.5',
+    '127.0.0.1'
+]
 
 
 # Application definition
@@ -43,10 +46,12 @@ INSTALLED_APPS = [
     'oauth2_provider',
     'drf_yasg',
     'rest_framework',
+    "corsheaders",
     'debug_toolbar'
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -54,6 +59,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "django.middleware.common.CommonMiddleware",
     "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
 
@@ -177,3 +183,5 @@ SWAGGER_SETTINGS = {
 INTERNAL_IPS = [
     "127.0.0.1",
 ]
+
+CORS_ALLOW_ALL_ORIGINS = True

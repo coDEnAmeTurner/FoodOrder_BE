@@ -12,12 +12,12 @@ class UserViewSet(viewsets.ViewSet, generics.CreateAPIView):
     parser_classes = [parsers.MultiPartParser]
     serializer_class = UserSerializer
 
-    def get_permissions(self):
-        if self.action.__eq__('current_user'):
-            return [permissions.IsAuthenticated()]
-        if self.action.__eq__('verify_shop'):
-            return [SuperUserPermissions()]
-        return [permissions.AllowAny()]
+    # def get_permissions(self):
+    #     if self.action.__eq__('current_user'):
+    #         return [permissions.IsAuthenticated()]
+    #     if self.action.__eq__('verify_shop'):
+    #         return [SuperUserPermissions()]
+    #     return [permissions.AllowAny()]
 
     @action(methods=['get'],detail=False,url_path='current-user')
     def current_user(self, request):
@@ -51,11 +51,11 @@ class DishViewSet(viewsets.ViewSet,generics.UpdateAPIView, generics.CreateAPIVie
     permission_classes = [ShopPermissions]
     pagination_class = DishPaginator
 
-    def get_permissions(self):
-        if self.action.__eq__('list'):
-            return [permissions.IsAuthenticated()]
+    # def get_permissions(self):
+    #     if self.action.__eq__('list'):
+    #         return [permissions.IsAuthenticated()]
 
-        return super().get_permissions()
+    #     return super().get_permissions()
 
     def get_queryset(self):
         shop_id = self.request.GET.get('shop_id')
@@ -70,18 +70,33 @@ class DishViewSet(viewsets.ViewSet,generics.UpdateAPIView, generics.CreateAPIVie
             queries = queries.filter(shop_id=shop_id)
         if name:
             queries = queries.filter(name__icontains=name)
-        if from_price or to_price:
-            queries = queries.filter(price__gt=float(from_price), price__lt=float(to_price))
+        if from_price and to_price:
+            print(type(from_price))
+            f_from_price = float(from_price)
+            f_to_price = float(to_price)
+            if (f_to_price >= f_from_price and f_to_price != 0):
+                queries = queries.filter(price__gt=f_from_price, price__lt=f_to_price)
         if is_available:
             queries = queries.filter(is_available=bool(is_available))
         if day_session:
             queries = queries.filter(day_session__icontains=day_session)
         return queries
 
-class MenuViewSet(viewsets.ViewSet,generics.UpdateAPIView, generics.CreateAPIView):
+class MenuViewSet(viewsets.ViewSet, generics.ListAPIView, generics.UpdateAPIView, generics.CreateAPIView):
     queryset = Menu.objects.all()
     serializer_class = MenuSerializer
     permission_classes = [ShopPermissions]
+
+    def get_queryset(self):
+        shop_id = self.request.GET.get('shop_id')
+        name = self.request.GET.get('name')
+        queries = self.queryset
+
+        if shop_id:
+            queries = queries.filter(shop_id=shop_id)
+        if name:
+            queries = queries.filter(name__icontains=name)
+        return queries
 
     def add_dishs_core(self, request, menu):
         # request.data has a key 'dish'
@@ -142,10 +157,10 @@ class OrderViewSet(viewsets.ViewSet,generics.UpdateAPIView,  generics.CreateAPIV
     serializer_class = OrderSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-    def get_permissions(self):
-        if self.action.__eq__('verify'):
-            return [ShopPermissions()]
-        return super().get_permissions()
+    # def get_permissions(self):
+    #     if self.action.__eq__('verify'):
+    #         return [ShopPermissions()]
+    #     return super().get_permissions()
 
     def create(self, request, *args, **kwargs):
         # request.data will have both keys: dish or menu

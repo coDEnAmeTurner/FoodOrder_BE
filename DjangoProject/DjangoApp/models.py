@@ -20,8 +20,8 @@ class DaySession(models.TextChoices):
 class User(AbstractUser) :
     avatar = CloudinaryField('avatar',null=True)
     name = models.CharField(blank=False,null=False,max_length=200)
-    email = models.TextField(blank=True,null=True)
-    phone = models.CharField(blank=True,null=True,max_length=11)
+    email = models.TextField(blank=True,null=True,default='')
+    phone = models.CharField(blank=True,null=True,max_length=11,default='')
     type = models.CharField(max_length=10,choices=UserType.choices,default=UserType.INDIVIDUAL)
     date_created = models.DateField(auto_now_add=True)
     date_modified = models.DateField(auto_now=True)
@@ -38,9 +38,10 @@ class Dish(models.Model):
     shop = models.ForeignKey('Shop',on_delete=models.CASCADE,to_field='user_id',null=True,blank=False)
     name = models.CharField(blank=False,null=False,max_length=200)
     price = models.FloatField(blank=False,null=False,default=0)
+    picture = CloudinaryField('avatar',null=True)
     is_available = models.BooleanField(default=True,blank=True,null=True)
-    day_session = models.CharField(max_length=10,choices=DaySession.choices,blank=True,null=True)
-    description = models.TextField(blank=True,null=True)
+    day_session = models.CharField(max_length=10,choices=DaySession.choices,blank=True,null=True,default='')
+    description = models.TextField(blank=True,null=True,default='')
     date_created = models.DateField(auto_now_add=True)
     date_modified = models.DateField(auto_now=True)
 
@@ -56,7 +57,7 @@ class Order_Dish(models.Model):
 
 class Shop(models.Model):
     user = models.OneToOneField('user',on_delete=models.CASCADE,default=1,primary_key=True)
-    location = models.TextField(blank=True,null=False)
+    location = models.TextField(blank=True,null=False,default='')
     is_valid = models.BooleanField(default=0,blank=False,null=False)
     ship_payment = models.FloatField(default=0,blank=False,null=False)
     date_created = models.DateField(auto_now_add=True)
@@ -82,7 +83,7 @@ class Comment(models.Model):
     shop = models.ForeignKey('Shop',on_delete=models.CASCADE,null=True,blank=False,to_field='user')
     dish = models.ForeignKey('Dish',on_delete=models.CASCADE,null=True,blank=False)
     parent = models.ForeignKey('Comment',on_delete=models.CASCADE,null=True,blank=False)
-    content = models.TextField(blank=True,null=True)
+    content = models.TextField(blank=True,null=True,default='')
     date_created = models.DateField(auto_now_add=True)
     date_modified = models.DateField(auto_now=True)
 
