@@ -67,19 +67,20 @@ class DishViewSet(viewsets.ViewSet,generics.UpdateAPIView, generics.CreateAPIVie
         queries = self.queryset
 
         if shop_id:
-            queries = queries.filter(shop_id=shop_id)
+            queries = queries.filter(shop_id=int(shop_id))
         if name:
             queries = queries.filter(name__icontains=name)
         if from_price and to_price:
-            print(type(from_price))
             f_from_price = float(from_price)
             f_to_price = float(to_price)
             if (f_to_price >= f_from_price and f_to_price != 0):
                 queries = queries.filter(price__gt=f_from_price, price__lt=f_to_price)
         if is_available:
             queries = queries.filter(is_available=bool(is_available))
-        if day_session:
+        if day_session :
             queries = queries.filter(day_session__icontains=day_session)
+
+        print("Dish list query: " + queries.query.__str__())
         return queries
 
 class MenuViewSet(viewsets.ViewSet, generics.ListAPIView, generics.UpdateAPIView, generics.CreateAPIView):
