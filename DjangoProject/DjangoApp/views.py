@@ -45,7 +45,7 @@ class UserViewSet(viewsets.ViewSet, generics.CreateAPIView):
 
         return Response(data={**UserSerializer(user).data,**ShopSerializer(shop).data},status=status.HTTP_200_OK)
 
-class DishViewSet(viewsets.ViewSet,generics.UpdateAPIView, generics.CreateAPIView,generics.ListAPIView):
+class DishViewSet(viewsets.ViewSet,generics.DestroyAPIView, generics.UpdateAPIView, generics.CreateAPIView,generics.ListAPIView):
     queryset = Dish.objects.all()
     serializer_class = DishSerializer
     permission_classes = [ShopPermissions]
@@ -83,7 +83,7 @@ class DishViewSet(viewsets.ViewSet,generics.UpdateAPIView, generics.CreateAPIVie
         print("Dish list query: " + queries.query.__str__())
         return queries
 
-class MenuViewSet(viewsets.ViewSet, generics.ListAPIView, generics.UpdateAPIView, generics.CreateAPIView):
+class MenuViewSet(viewsets.ViewSet, generics.ListAPIView,generics.DestroyAPIView, generics.UpdateAPIView, generics.CreateAPIView):
     queryset = Menu.objects.all()
     serializer_class = MenuSerializer
     permission_classes = [ShopPermissions]
@@ -153,7 +153,7 @@ class MenuViewSet(viewsets.ViewSet, generics.ListAPIView, generics.UpdateAPIView
         except Exception as e:
             return Response(data={"error_msg":f"{str(e)}","param_id":pk},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
-class OrderViewSet(viewsets.ViewSet,generics.UpdateAPIView,  generics.CreateAPIView):
+class OrderViewSet(viewsets.ViewSet,generics.UpdateAPIView, generics.DestroyAPIView, generics.CreateAPIView):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -245,7 +245,7 @@ class OrderViewSet(viewsets.ViewSet,generics.UpdateAPIView,  generics.CreateAPIV
         except Exception as e:
             return Response(data={"error_msg":f"{str(e)}","param_id":pk},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-class CommentViewSet(viewsets.ViewSet,generics.UpdateAPIView, generics.CreateAPIView):
+class CommentViewSet(viewsets.ViewSet,generics.UpdateAPIView,generics.DestroyAPIView, generics.CreateAPIView):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -262,7 +262,7 @@ class CommentViewSet(viewsets.ViewSet,generics.UpdateAPIView, generics.CreateAPI
         except Exception as e:
             return Response(data={"error_msg":f"{str(e)}","param_id":kwargs.get("pk")},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
-class RateViewSet(viewsets.ViewSet,generics.UpdateAPIView,generics.CreateAPIView):
+class RateViewSet(viewsets.ViewSet,generics.UpdateAPIView,generics.DestroyAPIView,generics.CreateAPIView):
     queryset = Rate.objects.all()
     serializer_class = RateSerializer
     permission_classes = [permissions.IsAuthenticated]
