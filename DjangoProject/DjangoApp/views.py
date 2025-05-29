@@ -74,9 +74,9 @@ class DishViewSet(viewsets.ViewSet,generics.DestroyAPIView, generics.UpdateAPIVi
             f_from_price = float(from_price)
             f_to_price = float(to_price)
             if (f_to_price >= f_from_price and f_to_price != 0):
-                queries = queries.filter(price__gt=f_from_price, price__lt=f_to_price)
+                queries = queries.filter(price__gte=f_from_price, price__lte=f_to_price)
         if is_available:
-            queries = queries.filter(is_available=bool(is_available))
+            queries = queries.filter(is_available=bool(int(is_available)))
         if day_session :
             queries = queries.filter(day_session__icontains=day_session)
 
