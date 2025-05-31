@@ -45,7 +45,13 @@ class UserViewSet(viewsets.ViewSet, generics.CreateAPIView):
 
         return Response(data={**UserSerializer(user).data,**ShopSerializer(shop).data},status=status.HTTP_200_OK)
 
-class DishViewSet(viewsets.ViewSet,generics.DestroyAPIView, generics.UpdateAPIView, generics.CreateAPIView,generics.ListAPIView):
+class ShopViewSet(viewsets.ViewSet, generics.RetrieveAPIView):
+    queryset = Shop.objects.all()
+    serializer_class = ShopSerializer
+    permission_classes = [ShopPermissions]
+
+
+class DishViewSet(viewsets.ViewSet,generics.DestroyAPIView, generics.UpdateAPIView, generics.CreateAPIView,generics.ListAPIView, generics.RetrieveAPIView):
     queryset = Dish.objects.all()
     serializer_class = DishSerializer
     permission_classes = [ShopPermissions]

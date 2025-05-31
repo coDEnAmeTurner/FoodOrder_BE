@@ -42,8 +42,12 @@ class ShopSerializer(ModelSerializer):
     class Meta:
         model = Shop
         fields='__all__'
+    
+    user = UserSerializer()
 
 class DishSerializer(ModelSerializer):
+    shop = ShopSerializer()
+
     def create(self, validated_data):
         dish = Dish(**validated_data)
         shop_id = validated_data.get('shop_id')
