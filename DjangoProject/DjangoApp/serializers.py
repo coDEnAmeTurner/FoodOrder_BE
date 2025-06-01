@@ -77,6 +77,10 @@ class OrderSerializer(ModelSerializer):
         fields='__all__'
 
 class CommentSerializer(ModelSerializer):
+    user = UserSerializer()
+    shop = ShopSerializer()
+    # parent = CommentSerializer()
+    
     def create(self, validated_data):
         comment = super().create(validated_data)
         comment.dish = validated_data['dish_id']
@@ -91,6 +95,7 @@ class CommentSerializer(ModelSerializer):
                 'read_only':True
             }
         }
+
 
 class RateSerializer(ModelSerializer):
     def create(self, validated_data):

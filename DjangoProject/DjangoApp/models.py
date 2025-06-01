@@ -81,7 +81,7 @@ class Menu_Dish(models.Model):
 class Comment(models.Model):
     user = models.ForeignKey('User',on_delete=models.CASCADE,null=True,blank=False)
     shop = models.ForeignKey('Shop',on_delete=models.CASCADE,null=True,blank=False,to_field='user')
-    dish = models.ForeignKey('Dish',on_delete=models.CASCADE,null=True,blank=False)
+    dish = models.ForeignKey('Dish',on_delete=models.CASCADE,null=True,blank=False, related_name='comments')
     parent = models.ForeignKey('Comment',on_delete=models.CASCADE,null=True,blank=False)
     content = models.TextField(blank=True,null=True,default='')
     date_created = models.DateField(auto_now_add=True)
