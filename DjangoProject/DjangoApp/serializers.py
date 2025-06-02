@@ -76,10 +76,20 @@ class OrderSerializer(ModelSerializer):
         model = Order
         fields='__all__'
 
+class LevelCommentSerializer(ModelSerializer):
+    class Meta:
+        model = Comment
+        fields='__all__'
+        extra_kwargs={
+            'user_id': {
+                'read_only':True
+            }
+        }
+
 class CommentSerializer(ModelSerializer):
     user = UserSerializer()
     shop = ShopSerializer()
-    # parent = CommentSerializer()
+    children = LevelCommentSerializer(many=True)
     
     def create(self, validated_data):
         comment = super().create(validated_data)

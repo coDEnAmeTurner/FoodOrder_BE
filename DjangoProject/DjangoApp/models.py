@@ -82,7 +82,7 @@ class Comment(models.Model):
     user = models.ForeignKey('User',on_delete=models.CASCADE,null=True,blank=False)
     shop = models.ForeignKey('Shop',on_delete=models.CASCADE,null=True,blank=False,to_field='user')
     dish = models.ForeignKey('Dish',on_delete=models.CASCADE,null=True,blank=False, related_name='comments')
-    parent = models.ForeignKey('Comment',on_delete=models.CASCADE,null=True,blank=False)
+    parent = models.ForeignKey('Comment',on_delete=models.CASCADE,null=True,blank=False, related_name='children')
     content = models.TextField(blank=True,null=True,default='')
     date_created = models.DateField(auto_now_add=True)
     date_modified = models.DateField(auto_now=True)

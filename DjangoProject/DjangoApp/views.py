@@ -259,7 +259,7 @@ class OrderViewSet(viewsets.ViewSet,generics.UpdateAPIView, generics.DestroyAPIV
         except Exception as e:
             return Response(data={"error_msg":f"{str(e)}","param_id":pk},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-class CommentViewSet(viewsets.ViewSet,generics.UpdateAPIView,generics.DestroyAPIView, generics.CreateAPIView, ):
+class CommentViewSet(viewsets.ViewSet,generics.UpdateAPIView,generics.DestroyAPIView, generics.CreateAPIView,generics.RetrieveAPIView ):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
     permission_classes = [permissions.IsAuthenticated]
