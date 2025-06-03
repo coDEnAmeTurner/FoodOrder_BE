@@ -6,6 +6,7 @@ from .pagination import DishPaginator
 from .models import *
 from rest_framework.decorators import action
 from .perms import ShopPermissions, SuperUserPermissions
+from django.db.models import Count
 
 class UserViewSet(viewsets.ViewSet, generics.CreateAPIView):
     queryset = User.objects.all()
@@ -86,14 +87,12 @@ class DishViewSet(viewsets.ViewSet,generics.DestroyAPIView, generics.UpdateAPIVi
         if day_session :
             queries = queries.filter(day_session__icontains=day_session)
 
-        print("Dish list query: " + queries.query.__str__())
         return queries
     
     @action(methods=['get'], detail=True, url_path='comments')
     def get_comments(self, request, pk):
         dish = self.get_object()
-        comments = dish.comments.all()
-
+        comments = dish.comments.all().annotate(count=Count('children'))
         return Response(CommentSerializer(comments, many=True, context={'request':request}).data, status=status.HTTP_200_OK)
 
 
@@ -260,7 +259,7 @@ class OrderViewSet(viewsets.ViewSet,generics.UpdateAPIView, generics.DestroyAPIV
             return Response(data={"error_msg":f"{str(e)}","param_id":pk},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class CommentViewSet(viewsets.ViewSet,generics.UpdateAPIView,generics.DestroyAPIView, generics.CreateAPIView,generics.RetrieveAPIView ):
-    queryset = Comment.objects.all()
+    queryset = Comment.objects.all().annotate(count=Count('children'))
     serializer_class = CommentSerializer
     permission_classes = [permissions.IsAuthenticated]
 
@@ -276,6 +275,12 @@ class CommentViewSet(viewsets.ViewSet,generics.UpdateAPIView,generics.DestroyAPI
         except Exception as e:
             return Response(data={"error_msg":f"{str(e)}","param_id":kwargs.get("pk")},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
+    @action(methods=['get'], detail=True,url_path='comments')
+    def get_children_comment(self, request, pk):
+        comment = self.get_object()
+        children = comment.children.all().annotate(count=Count('children'))
+
+        return Response(CommentSerializer(children, many=True, context={'request':request}).data, status=status.HTTP_200_OK)
     
     
 class RateViewSet(viewsets.ViewSet,generics.UpdateAPIView,generics.DestroyAPIView,generics.CreateAPIView):

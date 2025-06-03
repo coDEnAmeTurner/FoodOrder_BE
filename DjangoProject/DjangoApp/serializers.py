@@ -1,6 +1,7 @@
-from rest_framework.serializers import ModelSerializer
+from rest_framework.serializers import ModelSerializer, SerializerMethodField
 from .models import Dish, Menu, Menu_Dish, Order, Rate, Shop, User,UserType,Comment
 import cloudinary.uploader
+from django.db.models import Count
 
 class UserSerializer(ModelSerializer):
     def create(self, validated_data):
@@ -89,17 +90,27 @@ class LevelCommentSerializer(ModelSerializer):
 class CommentSerializer(ModelSerializer):
     user = UserSerializer()
     shop = ShopSerializer()
-    children = LevelCommentSerializer(many=True)
+    dish = DishSerializer()
+    count = SerializerMethodField()
     
     def create(self, validated_data):
         comment = super().create(validated_data)
         comment.dish = validated_data['dish_id']
         comment.shop = validated_data['shop_id']
         comment.parent = validated_data['parent_id']
+
         return comment
+    
+    def get_count(self, obj):
+        try:
+            print('Data', obj.user)
+            return obj.count
+        except:
+            return None
+    
     class Meta:
         model = Comment
-        fields='__all__'
+        fields=['id','user', 'shop','dish','parent','content','date_created','date_modified','count']
         extra_kwargs={
             'user_id': {
                 'read_only':True
