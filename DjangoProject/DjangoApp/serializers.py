@@ -78,6 +78,8 @@ class OrderSerializer(ModelSerializer):
         fields='__all__'
 
 class LevelCommentSerializer(ModelSerializer):
+    user = UserSerializer()
+
     class Meta:
         model = Comment
         fields='__all__'
@@ -92,6 +94,7 @@ class CommentSerializer(ModelSerializer):
     shop = ShopSerializer()
     dish = DishSerializer()
     count = SerializerMethodField()
+    parent = LevelCommentSerializer()
     
     def create(self, validated_data):
         comment = super().create(validated_data)
