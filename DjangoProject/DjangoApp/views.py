@@ -96,7 +96,7 @@ class DishViewSet(viewsets.ViewSet,generics.DestroyAPIView, generics.UpdateAPIVi
         return Response(CommentSerializer(comments, many=True, context={'request':request}).data, status=status.HTTP_200_OK)
 
 
-class MenuViewSet(viewsets.ViewSet, generics.ListAPIView,generics.DestroyAPIView, generics.UpdateAPIView, generics.CreateAPIView):
+class MenuViewSet(viewsets.ViewSet, generics.ListAPIView,generics.DestroyAPIView, generics.UpdateAPIView, generics.CreateAPIView, generics.RetrieveAPIView):
     queryset = Menu.objects.all()
     serializer_class = MenuSerializer
     permission_classes = [ShopPermissions]

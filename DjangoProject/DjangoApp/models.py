@@ -17,6 +17,16 @@ class DaySession(models.TextChoices):
     MORNING = 'MORNING'
     AFTERNOON = 'AFTERNOON'
 
+class OrderRelation(models.Model):
+    order = models.ForeignKey('Order', on_delete=models.CASCADE, null=False, blank=False)
+    count = models.IntegerField(default=0, blank=False, null=False)
+    side_note = models.TextField(blank=True, null=True, default='')
+    date_created = models.DateField(auto_now_add=True)
+    date_modified = models.DateField(auto_now=True)
+
+    class Meta:
+        abstract = True
+
 class User(AbstractUser) :
     avatar = CloudinaryField('avatar',null=True)
     name = models.CharField(blank=False,null=False,max_length=200)
@@ -45,15 +55,18 @@ class Dish(models.Model):
     date_created = models.DateField(auto_now_add=True)
     date_modified = models.DateField(auto_now=True)
 
-class Order_Dish(models.Model):
-    order = models.ForeignKey('Order', on_delete=models.CASCADE)
+class Order_Dish(OrderRelation):
     dish = models.ForeignKey('Dish',on_delete=models.CASCADE)
-    count = models.IntegerField(default=0,blank=False,null=False)
-    date_created = models.DateField(auto_now_add=True)
-    date_modified = models.DateField(auto_now=True)
+    
+    class Meta: 
+        unique_together = ('order', 'dish')
+
+
+class Order_Menu(OrderRelation):
+    menu = models.ForeignKey('Menu',on_delete=models.CASCADE)
 
     class Meta:
-        unique_together = ('order','dish')
+        unique_together = ('order','menu')
 
 class Shop(models.Model):
     user = models.OneToOneField('user',on_delete=models.CASCADE,default=1,primary_key=True)

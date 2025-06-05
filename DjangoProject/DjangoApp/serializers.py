@@ -63,6 +63,8 @@ class DishSerializer(ModelSerializer):
         fields='__all__'
 
 class MenuSerializer(ModelSerializer):
+    shop = ShopSerializer()
+
     class Meta:
         model = Menu
         fields='__all__'
@@ -106,7 +108,6 @@ class CommentSerializer(ModelSerializer):
     
     def get_count(self, obj):
         try:
-            print('Data', obj.user)
             return obj.count
         except:
             return None
