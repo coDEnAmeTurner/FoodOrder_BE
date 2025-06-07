@@ -166,7 +166,7 @@ class MenuViewSet(viewsets.ViewSet, generics.ListAPIView,generics.DestroyAPIView
         except Exception as e:
             return Response(data={"error_msg":f"{str(e)}","param_id":pk},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
-class OrderViewSet(viewsets.ViewSet,generics.UpdateAPIView, generics.DestroyAPIView, generics.CreateAPIView):
+class OrderViewSet(viewsets.ViewSet,generics.UpdateAPIView, generics.DestroyAPIView):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -176,77 +176,62 @@ class OrderViewSet(viewsets.ViewSet,generics.UpdateAPIView, generics.DestroyAPIV
     #         return [ShopPermissions()]
     #     return super().get_permissions()
 
-    def create(self, request, *args, **kwargs):
-        # request.data will have both keys: dish or menu
-        # {
-        #   payment_type: 'CASH'
-        #   dish: [
-        #    {'id':1,'count':2},
-        #    {'id':2,'count':3},
-        #   ],
-        #   menu: [1,2,3,4,5,...]
-        #}
+    @action(methods=['post'], detail=False, url_path='dishs')
+    def create_order_dishs(self, request): 
+        itemId = request.data.get('itemId')
+        count= request.data.get('count')
+        purchaseType= request.data.get('purchaseType')
+        note= request.data.get('note')
+        shipAddress = request.data.get('shipAddress')
 
-        try:
-            response = super().create(request, *args, **kwargs)
-            user = self.request.user
-            order = Order.objects.get(pk=int(response.data['id']))
-            order.user = user
-            order.payment_type = response.data['payment_type']
-            order.save();
+        dish = Dish.objects.get(pk=itemId)
 
-            dish_list = request.data['dish']
-            menu_id_list = request.data['menu']
+        order = Order()
+        order.user = request.user
+        order.payment_type = purchaseType
+        order.total_price = dish.price * count + dish.shop.ship_payment
+        order.ship_address = shipAddress
+        order.save()
 
-            if dish_list or menu_id_list:
-            #   dish: [
-            #    {'id':1,'count':2},
-            #    {'id':2,'count':3},
-            #   ],
-                if dish_list:
-                    for jobj in dish_list:
-                        try:
-                            order_dish = Order_Dish()
-                            dish = Dish.objects.get(pk=jobj['id'])
-                            count = jobj['count']
-                            order_dish.order = order
-                            order_dish.dish = dish
-                            order_dish.count += count
-                            order_dish.save()
-                        except Dish.DoesNotExist as od:
-                            return Response(data={"error_msg":f"Dish {jobj['id']} not found."},status=status.HTTP_404_NOT_FOUND)
-                        except Exception as od:
-                            return Response(data={"error_msg":f"{str(e)}"},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-                
-            #   menu: [1,2,3,4,5,...]
-                if menu_id_list:
-                    for id in menu_id_list:
-                        try:
-                            menu = Menu.objects.get(pk=id)
-                            md_pairs = menu.menu_dish_pairs.all()
-                            for pair in md_pairs:
-                                order_found = Order_Dish.objects.filter(order=order,dish=pair.dish).first()
-                                if (order_found):
-                                    order_found.count += pair.count
-                                    order_found.save()
-                                else:
-                                    order_dish = Order_Dish()
-                                    order_dish.order = order
-                                    order_dish.dish = pair.dish
-                                    order_dish.count += pair.count 
-                                    order_dish.save()
-                        except Menu.DoesNotExist as od:
-                            return Response(data={"error_msg":f"Menu {id} not found."},status=status.HTTP_404_NOT_FOUND)
-                        except Exception as od:
-                            return Response(data={"error_msg":f"{str(e)}"},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-            return Response(data=OrderSerializer(order).data,status=status.HTTP_201_CREATED)
-        except Order.DoesNotExist as od:
-            return Response(data={"error_msg":f"Order {response.data['id']} not found."},status=status.HTTP_404_NOT_FOUND)
-        except Exception as e:
-            return Response(data={"error_msg":f"{str(e)}","param_id":kwargs.get("pk")},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
+        relation = Order_Dish()
+        relation.order = order
+        relation.dish = dish
+        relation.count = count
+        relation.side_note = note
+        relation.save()
+
+        return Response(data=OrderSerializer(order).data,status=status.HTTP_201_CREATED)
+    
+    @action(methods=['post'], detail=False, url_path='menus')
+    def create_order_menus(self, request): 
+        itemId = request.data.get('itemId')
+        count= request.data.get('count')
+        purchaseType= request.data.get('purchaseType')
+        note= request.data.get('note')
+        shipAddress = request.data.get('shipAddress')
+
+        menu = Menu.objects.get(pk=itemId)
+
+        order = Order()
+        order.user = request.user
+        dishs = menu.dishs.all()
+        menu_price  = sum(dish.price for dish in dishs) * count
+        order.total_price = menu_price * count + menu.shop.ship_payment
+        order.payment_type = purchaseType
+        order.ship_address = shipAddress
+        order.save()
+
+        relation = Order_Menu()
+        relation.order = order
+        relation.menu = menu
+        relation.count = count
+        relation.side_note = note
+        relation.save()
+
+        return Response(data=OrderSerializer(order).data,status=status.HTTP_201_CREATED)
+
     @action(methods=['patch'],detail=True,url_path='verify')
-    def verify(selft, request, pk):
+    def verify(self, request, pk):
         try:
             order = Order.objects.get(pk=pk)
             order.is_valid = True

@@ -10,7 +10,8 @@ class UserType(models.TextChoices):
     SHOP = 'SHOP'
 
 class PurchaseType(models.TextChoices):
-    BANKING = 'BANKING'
+    MOMO = 'MOMO'
+    VNPAY = 'VNPAY'
     CASH = 'CASH'
 
 class DaySession(models.TextChoices):
@@ -18,7 +19,7 @@ class DaySession(models.TextChoices):
     AFTERNOON = 'AFTERNOON'
 
 class OrderRelation(models.Model):
-    order = models.ForeignKey('Order', on_delete=models.CASCADE, null=False, blank=False)
+    order = models.ForeignKey('Order', on_delete=models.CASCADE, null=False, blank=False, related_name='%(class)s_orders')
     count = models.IntegerField(default=0, blank=False, null=False)
     side_note = models.TextField(blank=True, null=True, default='')
     date_created = models.DateField(auto_now_add=True)
@@ -40,6 +41,8 @@ class Order(models.Model):
     user = models.ForeignKey('User',on_delete=models.CASCADE,null=True,blank=False)
     is_valid = models.BooleanField(default=0)
     payment_type = models.CharField(max_length=10,choices=PurchaseType.choices,default=PurchaseType.CASH)
+    total_price = models.FloatField(default=0,blank=False,null=False)
+    ship_address = models.TextField(blank=True,null=False,default='')
     date_order = models.DateField(auto_now_add=True)
     date_created = models.DateField(auto_now_add=True)
     date_modified = models.DateField(auto_now=True)

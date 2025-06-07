@@ -1,5 +1,5 @@
 from rest_framework.serializers import ModelSerializer, SerializerMethodField
-from .models import Dish, Menu, Menu_Dish, Order, Rate, Shop, User,UserType,Comment
+from .models import Dish, Menu, Menu_Dish, Order, Order_Dish, Order_Menu, Rate, Shop, User,UserType,Comment
 import cloudinary.uploader
 from django.db.models import Count
 
@@ -74,7 +74,24 @@ class MenuDishSerializer(ModelSerializer):
         model = Menu_Dish
         fields='__all__'
 
+class OrderDishSerializer(ModelSerializer):
+    dish = DishSerializer()
+
+    class Meta:
+        model = Order_Dish
+        fields='__all__'
+
+class OrderMenuSerializer(ModelSerializer):
+    menu = MenuSerializer()
+
+    class Meta:
+        model = Order_Menu
+        fields='__all__'
+
 class OrderSerializer(ModelSerializer):
+    order_dish_orders = OrderDishSerializer(many=True)
+    order_menu_orders = OrderMenuSerializer(many=True)
+
     class Meta:
         model = Order
         fields='__all__'
