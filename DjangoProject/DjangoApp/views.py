@@ -166,7 +166,7 @@ class MenuViewSet(viewsets.ViewSet, generics.ListAPIView,generics.DestroyAPIView
         except Exception as e:
             return Response(data={"error_msg":f"{str(e)}","param_id":pk},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
-class OrderViewSet(viewsets.ViewSet,generics.UpdateAPIView, generics.DestroyAPIView):
+class OrderViewSet(viewsets.ViewSet,generics.UpdateAPIView, generics.DestroyAPIView, generics.RetrieveAPIView):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -189,7 +189,7 @@ class OrderViewSet(viewsets.ViewSet,generics.UpdateAPIView, generics.DestroyAPIV
         order = Order()
         order.user = request.user
         order.payment_type = purchaseType
-        order.total_price = dish.price * count + dish.shop.ship_payment
+        order.total_price = dish.price * float(count) + dish.shop.ship_payment
         order.ship_address = shipAddress
         order.save()
 
@@ -216,7 +216,7 @@ class OrderViewSet(viewsets.ViewSet,generics.UpdateAPIView, generics.DestroyAPIV
         order.user = request.user
         dishs = menu.dishs.all()
         menu_price  = sum(dish.price for dish in dishs) * count
-        order.total_price = menu_price * count + menu.shop.ship_payment
+        order.total_price = menu_price * float(count) + menu.shop.ship_payment
         order.payment_type = purchaseType
         order.ship_address = shipAddress
         order.save()
